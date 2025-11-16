@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ShortMaker - Local Video Batch Creator
 
 ShortMaker is a simple yet powerful web-based tool for batch-creating short video clips. It takes a single background image and a long audio file, then slices the audio into multiple segments to generate a separate video for each segment.
@@ -112,3 +113,7 @@ To stop the container, go to your terminal window where the app is running and p
 ├── .gitignore            # Tells Git which files to ignore
 └── README.md             # This documentation file
 ```
+=======
+# shortmaker
+It takes an audio input and image and creates YouTube Shorts
+>>>>>>> dcdd462dd66d4d9878dfb8b0458a4d57b464262a

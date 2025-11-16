@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ShortMaker - Local Processor</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 2em auto; }
+        .input-group { margin-bottom: 1em; }
+        label { display: block; margin-bottom: 0.5em; font-weight: bold; }
+        select, input[type="number"], input[type="submit"] { width: 100%; padding: 8px; box-sizing: border-box; }
+        .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; }
+        .notice { background-color: #fffbe6; border: 1px solid #ffe58f; padding: 1em; margin-bottom: 1em; border-radius: 5px;}
+        input[type="submit"]:disabled { background-color: #ccc; cursor: not-allowed; }
+        
+        /* --- Styles for the Loading Overlay --- */
+        #loading-overlay {
+            position: fixed; /* Cover the entire screen */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's on top of everything */
+            flex-direction: column;
+        }
+
+        .spinner {
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1.5s linear infinite;
+        }
+
+        #loading-text {
+            color: white;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- The Loading Overlay HTML Structure -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div id="loading-text">Processing your videos... Please wait.</div>
+    </div>
+
+    <h1>ShortMaker - Local Processor</h1>
+    <div class="notice">
+        <strong>Note:</strong> Place your image and audio files in the <code>data</code> folder first. Then, refresh this page to see them in the lists below.
+    </div>
+
+    <form id="process-form" method="post" action="/process">
+        <!-- Form content remains the same... -->
+        <div class="input-group">
+            <label for="image_select">1. Select an Image:</label>
+            <select name="selected_image" id="image_select" required>
+                {% if image_files %}
+                    {% for filename in image_files %} <option value="{{ filename }}">{{ filename }}</option> {% endfor %}
+                {% else %}
+                    <option value="" disabled>No image files found in 'data' folder</option>
+                {% endif %}
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="audio_select">2. Select an Audio File:</label>
+            <select name="selected_audio" id="audio_select" required>
+                 {% if audio_files %}
+                    {% for filename in audio_files %} <option value="{{ filename }}">{{ filename }}</option> {% endfor %}
+                {% else %}
+                    <option value="" disabled>No audio files found in 'data' folder</option>
+                {% endif %}
+            </select>
+        </div>
+        <hr>
+        <h3>3. Configure Slicing Options</h3>
+        <div class="config-grid">
+            <div class="input-group"><label for="num_clips">Number of Clips:</label><input id="num_clips" type="number" name="num_clips" value="5" min="1" required></div>
+            <div class="input-group"><label for="clip_duration">Clip Duration (seconds):</label><input id="clip_duration" type="number" name="clip_duration" value="60" min="1" required></div>
+        </div>
+        <div class="input-group"><label for="start_offset">Start Offset (seconds):</label><input id="start_offset" type="number" name="start_offset" value="0" min="0" required></div>
+        <hr>
+        <div>
+            <input id="submit-button" type="submit" value="Create Videos" {% if not image_files or not audio_files %}disabled{% endif %}>
+        </div>
+    </form>
+
+    <!-- The JavaScript to control the overlay -->
+    <script>
+        const form = document.getElementById('process-form');
+        const submitButton = document.getElementById('submit-button');
+        const loadingOverlay = document.getElementById('loading-overlay');
+
+        form.addEventListener('submit', function() {
+            // Show the overlay
+            loadingOverlay.style.display = 'flex';
+            
+            // Disable the button and change its text
+            submitButton.disabled = true;
+            submitButton.value = 'Processing...';
+        });
+    </script>
+</body>
+</html>

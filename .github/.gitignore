@@ -1,0 +1,18 @@
+# Python cache files
+__pycache__/
+*.pyc
+
+# IDE and OS specific files
+.idea/
+.vscode/
+.DS_Store
+
+# User-generated content and output.
+# These folders will be managed locally by the user, not by the repository.
+/data/*
+/output/*
+
+# Keep the directories in the repo, but ignore their contents.
+# Add a .gitkeep file to each empty directory you want to track.
+!/data/.gitkeep
+!/output/.gitkeep

@@ -1,119 +1,97 @@
-<<<<<<< HEAD
-# ShortMaker - Local Video Batch Creator
+# ShortMaker 🎬
 
-ShortMaker is a simple yet powerful web-based tool for batch-creating short video clips. It takes a single background image and a long audio file, then slices the audio into multiple segments to generate a separate video for each segment.
+ShortMaker is a simple web-based utility designed to automate the creation of short video clips. It combines a static background image with sequential segments of an audio file, making it perfect for generating content for platforms like YouTube Shorts, TikTok, or Instagram Reels from podcasts or other long-form audio.
 
-The entire process is managed locally on your machine using Docker, ensuring fast performance with no time wasted on file uploads or downloads.
-
-## ✅ Key Features
-
-*   **Local First:** Processes files directly from your local folders for maximum speed.
-*   **Web-Based UI:** An easy-to-use interface to control the video creation process without touching the command line.
-*   **Batch Processing:** Create dozens of clips from a single audio source in one go.
-*   **Highly Configurable:** Easily set the number of clips, clip duration, and a start offset for the audio.
-*   **Containerized:** Uses Docker for a one-command setup, ensuring it runs identically on any machine.
-*   **User-Friendly Feedback:** A loading overlay provides clear feedback while videos are being generated.
-
-## ⚙️ How It Works
-
-The application uses a "web-based controller" pattern:
-1.  You place your source media files (one image, one audio) into a local `data` directory.
-2.  You run the application inside a Docker container.
-3.  The web interface automatically detects your files and displays them in dropdown menus.
-4.  You configure your desired output (e.g., "create 10 clips of 60 seconds each") and submit.
-5.  The backend script processes the files and saves the resulting `.mp4` videos directly to your local `output` directory.
+The application is built with Python, Flask, and MoviePy, and is containerized with Docker for easy, cross-platform setup.
 
 ---
 
-## 🚀 Getting Started
+### ## ✨ Features
 
-Follow these instructions to get the ShortMaker application running on your local machine.
+*   **Web-Based UI:** Easy-to-use interface to configure and generate videos.
+*   **Bulk Creation:** Generate dozens of clips from a single audio file in one go.
+*   **Customizable:** Set the number of clips, duration of each clip, and start offset.
+*   **Dockerized:** Hassle-free setup on Windows, macOS, and Linux without worrying about dependencies like FFmpeg.
 
-### Prerequisites
+---
 
-You must have **Docker** installed on your system.
-*   [Install Docker Desktop](https://www.docker.com/products/docker-desktop/)
+### ## 🚀 Getting Started (Recommended Method: Docker)
 
-### Installation & Setup
+Using Docker is the simplest and most reliable way to run ShortMaker. It ensures that the application and all its dependencies work correctly regardless of your operating system.
+
+#### ### 1. Prerequisites
+
+*   You must have **Docker Desktop** installed and running on your system.
+    *   [Download for Windows](https://www.docker.com/products/docker-desktop/)
+    *   [Download for Mac](https://www.docker.com/products/docker-desktop/)
+    *   [Download for Linux](https://www.docker.com/products/docker-desktop/)
+
+#### ### 2. Setup Instructions
 
 1.  **Clone the Repository**
+    Open your terminal or command prompt and clone this project.
     ```bash
-    git clone https://github.com/your-username/your-repo-name.git
-    cd your-repo-name
+    git clone https://github.com/abhrapal/shortmaker.git
+    cd shortmaker
     ```
 
-2.  **Prepare Your Media Files**
-    This is the most important step. Place the image and audio files you want to use inside the `data` folder. For example:
-    ```
-    shortmaker-project/
-    ├── data/
-    │   ├── background.png
-    │   └── long_podcast.mp3
-    │   └── .gitkeep
-    └── ...
-    ```
+2.  **Create Data and Output Folders**
+    You need to create two folders in the project's root directory: `data` and `output`.
+
+    *   `data/`: Place your source image (`.png`, `.jpg`) and audio (`.mp3`, `.wav`) files here.
+    *   `output/`: This is where the generated video clips will be saved.
 
 3.  **Build the Docker Image**
-    This command builds the application environment inside a self-contained image. You only need to do this once.
+    Run the following command in the project's root directory to build the Docker image. This will package the application and its dependencies.
     ```bash
     docker build -t shortmaker-app .
     ```
 
 4.  **Run the Docker Container**
-    This command starts the application and connects your local `data` and `output` folders to the container.
+    This command starts the application. The command is slightly different depending on your operating system.
+
+    ##### **For macOS and Linux:**
+    This command maps your local `data` and `output` folders to the folders inside the container.
     ```bash
-    docker run --rm -p 5001:5000 \
-      -v "$(pwd)/data:/app/data" \
-      -v "$(pwd)/output:/app/output" \
-      shortmaker-app
+    docker run -d -p 5000:5000 -v "$(pwd)/data:/app/data" -v "$(pwd)/output:/app/output" shortmaker-app
     ```
-    *   `--rm`: Automatically removes the container when you stop it.
-    *   `-p 5001:5000`: Maps port 5001 on your machine to port 5000 inside the container.
-    *   `-v`: Mounts your local folders into the container, allowing the app to read from `data` and write to `output`.
 
-You're all set! The server is now running.
+    ##### **For Windows (Command Prompt / PowerShell):**
+    Windows uses a different variable (`%cd%`) to refer to the current directory.
+    ```powershell
+    docker run -d -p 5000:5000 -v "%cd%\data:/app/data" -v "%cd%\output:/app/output" shortmaker-app
+    ```
 
----
-
-## 🖥️ Usage
-
-1.  **Open Your Browser**
-    Navigate to `http://localhost:5001`.
-
-2.  **Configure Your Job**
-    *   The web page will automatically show the image and audio files it found in your `data` folder. Select the ones you want to use.
-    *   Set the "Number of Clips," "Clip Duration," and "Start Offset" to your desired values.
-
-3.  **Create Videos**
-    *   Click the "Create Videos" button.
-    *   A loading overlay will appear while the backend processes your files. This may take some time depending on the number and length of the clips.
-
-4.  **Find Your Output**
-    *   Once the process is complete, a success message will appear.
-    *   Check the `output` folder in your project directory. All your newly created video files will be there!
-
-### Stopping the Application
-
-To stop the container, go to your terminal window where the app is running and press `Ctrl + C`.
+5.  **Access the Application**
+    Open your web browser and navigate to:
+    **[http://localhost:5000](http://localhost:5000)**
 
 ---
 
-## 📁 Project Structure
+### ## 🛠️ How to Use
 
-```
-.
-├── data/                 # Your source image and audio files go here
-│   └── .gitkeep
-├── output/               # Generated videos will appear here
-│   └── .gitkeep
-├── templates/
-│   └── index.html        # The HTML front-end
-├── app.py                # The main Flask application and processing logic
-├── Dockerfile            # Instructions for building the Docker image
-├── .gitignore            # Tells Git which files to ignore
-└── README.md             # This documentation file
-```
-=======
-# shortmaker
-It takes an audio input and image and creates YouTube Shorts
->>>>>>> dcdd462dd66d4d9878dfb8b0458a4d57b464262a
+1.  **Place Your Files:** Add at least one image and one audio file to the `data` folder.
+2.  **Open the Web UI:** Go to `http://localhost:5000`. The dropdowns will automatically populate with the files from your `data` folder.
+3.  **Configure Your Clips:**
+    *   Select the background image and source audio file.
+    *   Enter the number of clips you want to create.
+    *   Set the duration (in seconds) for each clip.
+    *   Optionally, set a start offset (in seconds) to skip the beginning of your audio file.
+4.  **Generate:** Click the **"Create Videos"** button.
+5.  **Find Your Videos:** The generated clips will appear in the `output` folder.
+
+---
+
+### ## 🔧 Advanced Setup (Manual Installation)
+
+If you prefer not to use Docker, you can run the application directly. This is recommended only for development purposes.
+
+#### ### Prerequisites
+
+1.  **Python 3.8+**: Ensure Python and `pip` are installed and added to your system's PATH.
+2.  **FFmpeg**: This is a critical dependency for video processing. You must install it and ensure it's accessible from your system's PATH.
+    *   [Official FFmpeg Download Page](https://ffmpeg.org/download.html)
+
+#### ### Instructions
+
+1.  **Clone the repo and create `requirements.txt`** as shown in the [Wiki Installation Guide](streamdown:incomplete-link)

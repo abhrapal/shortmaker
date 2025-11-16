@@ -11,13 +11,50 @@ The application is built with Python, Flask, and MoviePy, and is containerized w
 *   **Web-Based UI:** Easy-to-use interface to configure and generate videos.
 *   **Bulk Creation:** Generate dozens of clips from a single audio file in one go.
 *   **Customizable:** Set the number of clips, duration of each clip, and start offset.
-*   **Dockerized:** Hassle-free setup on Windows, macOS, and Linux without worrying about dependencies like FFmpeg.
+*   **Dockerized:** Hassle-free setup on Windows, macOS, and Linux without worrying about dependencies.
+
+---
+
+### ## 📂 Project Structure
+
+When you clone the repository, you will have the following structure. Understanding the role of each folder is key to using the application correctly.
+
+```
+shortmaker/
+├── 📄 app.py               # The main Flask application logic.
+├── 📄 Dockerfile           # Instructions for building the Docker image.
+├── 📁 templates/           # Contains the HTML for the web interface.
+│   └── 📄 index.html
+├── 📁 data/                # (You create this) Place your input media here.
+└── 📁 output/              # (You create this) Generated videos are saved here.
+```
+*   **`templates/`**: This folder is a core part of the application and comes with the repository. It holds the `index.html` file that creates the web user interface.
+*   **`data/` & `output/`**: These folders are the only ones you need to create manually. They are used to pass files to and from the Docker container.
+
+---
+
+### ## 🤔 Why Docker is Recommended
+
+While a manual setup is possible, using **Docker is strongly recommended** to ensure the application works perfectly without complex configuration. Here's why:
+
+1.  **Solving "Dependency Hell"**: The `moviepy` library depends on a tool called **FFmpeg**, which can be difficult to install correctly. Furthermore, this project relies on specific versions of Python libraries that might conflict with other projects on your machine.
+2.  **A Perfect, Isolated Environment**: The `Dockerfile` in this repository is a recipe that builds a clean, self-contained Linux environment. It automatically installs the correct version of Python, FFmpeg, and all necessary Python libraries.
+3.  **Consistency Across Machines**: Because the application runs inside this container, it behaves identically on Windows, macOS, and Linux. It completely eliminates "it works on my machine" problems.
+
+#### ### A Note on Docker: Build vs. Run
+
+You might notice that the `docker run` command only mentions the `data` and `output` folders. **This is intentional.**
+
+*   The application's source code (like `app.py` and the `templates` folder) is copied **into the image** during the `docker build` step. It becomes a permanent part of the application.
+*   The `docker run` command's volume flags (`-v`) are used only for **dynamic data**—the input files you provide (`data`) and the video files the application creates (`output`).
+
+By using Docker, you skip all the frustrating setup and get straight to using the application.
 
 ---
 
 ### ## 🚀 Getting Started (Recommended Method: Docker)
 
-Using Docker is the simplest and most reliable way to run ShortMaker. It ensures that the application and all its dependencies work correctly regardless of your operating system.
+Using Docker is the simplest and most reliable way to run ShortMaker.
 
 #### ### 1. Prerequisites
 
@@ -36,13 +73,12 @@ Using Docker is the simplest and most reliable way to run ShortMaker. It ensures
     ```
 
 2.  **Create Data and Output Folders**
-    You need to create two folders in the project's root directory: `data` and `output`.
-
+    Create the two required folders in the project's root directory: `data` and `output`.
     *   `data/`: Place your source image (`.png`, `.jpg`) and audio (`.mp3`, `.wav`) files here.
     *   `output/`: This is where the generated video clips will be saved.
 
 3.  **Build the Docker Image**
-    Run the following command in the project's root directory to build the Docker image. This will package the application and its dependencies.
+    Run the following command in the project's root directory to build the Docker image.
     ```bash
     docker build -t shortmaker-app .
     ```
@@ -51,13 +87,11 @@ Using Docker is the simplest and most reliable way to run ShortMaker. It ensures
     This command starts the application. The command is slightly different depending on your operating system.
 
     ##### **For macOS and Linux:**
-    This command maps your local `data` and `output` folders to the folders inside the container.
     ```bash
     docker run -d -p 5000:5000 -v "$(pwd)/data:/app/data" -v "$(pwd)/output:/app/output" shortmaker-app
     ```
 
     ##### **For Windows (Command Prompt / PowerShell):**
-    Windows uses a different variable (`%cd%`) to refer to the current directory.
     ```powershell
     docker run -d -p 5000:5000 -v "%cd%\data:/app/data" -v "%cd%\output:/app/output" shortmaker-app
     ```
@@ -82,16 +116,6 @@ Using Docker is the simplest and most reliable way to run ShortMaker. It ensures
 
 ---
 
-### ## 🔧 Advanced Setup (Manual Installation)
+### ## 📚 Wiki
 
-If you prefer not to use Docker, you can run the application directly. This is recommended only for development purposes.
-
-#### ### Prerequisites
-
-1.  **Python 3.8+**: Ensure Python and `pip` are installed and added to your system's PATH.
-2.  **FFmpeg**: This is a critical dependency for video processing. You must install it and ensure it's accessible from your system's PATH.
-    *   [Official FFmpeg Download Page](https://ffmpeg.org/download.html)
-
-#### ### Instructions
-
-1.  **Clone the repo and create `requirements.txt`** as shown in the [Wiki Installation Guide](streamdown:incomplete-link)
+For more detailed information on technical architecture, troubleshooting, and advanced usage, please visit the **[Project Wiki](https://github.com/abhrapal/shortmaker/wiki)**.
